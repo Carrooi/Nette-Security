@@ -85,7 +85,7 @@ use Carrooi\Security\User\User;
 /**
  * @author David Kudera
  */
-class Books implemenets IResourceAuthorizator
+class Books implements IResourceAuthorizator
 {
 
 
@@ -168,7 +168,7 @@ class BooksPresenter extends BasePresenter
 ```php
 
 // ...
-class Books implemenets IResourceAuthorizator
+class Books implements IResourceAuthorizator
 {
 
 	// ...
