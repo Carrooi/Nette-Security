@@ -16,7 +16,8 @@ website.
 ## Installation
 
 ```
-$ composer require carrooi/security:~1.0
+$ composer require carrooi/security
+$ composer update
 ```
 
 Then just enable nette extension in your config.neon:
