@@ -1,0 +1,53 @@
+php:
+	date.timezone: Europe/Prague
+
+
+extensions:
+	security: Carrooi\Security\DI\SecurityExtension
+
+
+nette:
+	security:
+		frames: null
+
+	session:
+		autoStart: false
+
+
+services:
+
+	cacheStorage:
+		class: Nette\Caching\Storages\MemoryStorage
+
+	user:
+		class: CarrooiTests\SecurityMocks\UserMock
+
+	nette.userStorage:
+		class: CarrooiTests\SecurityMocks\UserStorageMock
+
+	books:
+		class: CarrooiTests\Security\Model\Books
+
+
+security:
+
+	default: true
+
+	targetResources:
+		CarrooiTests\Security\Model\Book: book
+
+	resources:
+		book: CarrooiTests\Security\Model\Books
+
+		user:
+			default: false
+
+			actions:
+				view: true
+				delete: false
+
+				detail:
+					loggedIn: true
+
+				add:
+					roles: [admin]

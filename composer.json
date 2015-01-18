@@ -1,0 +1,34 @@
+{
+	"name": "carrooi/security",
+	"type": "library",
+	"description": "Modular security system for Nette framework",
+	"keywords": ["carrooi", "security", "authorization", "nette"],
+	"license": ["MIT"],
+	"authors": [
+		{
+			"name": "David Kudera",
+			"homepage": "http://davidkudera.com",
+			"email": "kudera.d@gmail.com"
+		}
+	],
+	"require": {
+		"nette/utils": "~2.2",
+		"nette/di": "~2.2",
+		"nette/security": "~2.2"
+	},
+	"require-dev": {
+		"nette/tester": "~1.3.0",
+		"nette/bootstrap": "~2.2",
+		"nette/application": "~2.2",
+		"nette/mail": "~2.2",
+		"nette/safe-stream": "~2.2"
+	},
+	"autoload": {
+		"psr-4": {
+			"Carrooi\\Security\\": "src/Carrooi/Security"
+		},
+		"classmap": [
+			"src/Carrooi/Security/exceptions.php"
+		]
+	}
+}
