@@ -5,11 +5,13 @@
 
 Extensible authorization built on top of [nette/security](https://github.com/nette/security).
 
-This package came in handy if you want to create modular website and keep all pieces decoupled with "custom" checking for privileges.
+This package came in handy if you want to create modular website and keep all pieces decoupled with "custom" checking 
+for privileges.
 
-Now you can really easily check if eq. given user is author of some book and so on..
+Now you can really easily check if eg. given user is author of some book and so on..
 
-This idea comes from [nette/addons](https://github.com/nette/web-addons.nette.org/blob/master/app/model/Authorizator.php) website.
+This idea comes from [nette/addons](https://github.com/nette/web-addons.nette.org/blob/master/app/model/Authorizator.php) 
+website.
 
 ## Installation
 
@@ -47,9 +49,11 @@ security:
 					roles: [admin]
 ```
 
-Well, there is nothing modular.... Yet.... We just say that resource `book` has `view` action which is accessible to everyone, `add` to logged users and `edit` with `delete` actions to users with `admin` roles.
+Well, there is nothing modular.... Yet.... We just say that resource `book` has `view` action which is accessible to 
+everyone, `add` to logged users and `edit` with `delete` actions to users with `admin` role.
 
-There are also two `default` options. With the first one we say that every `->isAllowed()` call on unknown action will automatically return `true`. But the second `default` will overwrite this option for all `book` actions to `false`.
+There are also two `default` options. With the first one we say that each `->isAllowed()` call on unknown action will 
+automatically return `true`. But the second `default` will overwrite this option for all `book` actions to `false`.
 
 That means that eg. `->isAllowed('book', 'detail')` will return `false`, but `->isAllowed('user', 'detail')` `true`.
 
@@ -112,7 +116,9 @@ class Books implemenets IResourceAuthorizator
 
 ## Use objects as resources
 
-In previous code you may noticed unused argument `$data` in `isAllowed` method. Imagine that you want to allow all users to update or delete their own books. First thing you need to do, is register some kind of "translator" for objects to resource names.
+In previous code you may noticed unused argument `$data` in `isAllowed` method. Imagine that you want to allow all users 
+to update or delete their own books. First thing you need to do, is register some kind of "translator" from objects to 
+resource names (lets say mappers).
 
 ```neon
 security:
@@ -120,7 +126,8 @@ security:
 		App\Model\Book: book
 ```
 
-Now every time you pass `App\Model\Book` object as resource, it will be automatically translated to `book` resource, which will be then processed with your `App\Model\Books` service registered from previous example.
+Now every time you pass `App\Model\Book` object as resource, it will be automatically translated to `book` resource, 
+which will be then processed with your `App\Model\Books` service registered in previous example.
 
 ```php
 <?php
@@ -187,7 +194,8 @@ class Books implemenets IResourceAuthorizator
 
 ## Compiler extension
 
-Your own DI compiler extensions can implement interface `Carrooi\Security\DI\ITargetResourcesProvider` for translating objects to resource names.
+Your own DI compiler extensions can implement interface `Carrooi\Security\DI\ITargetResourcesProvider` for resource 
+mappers.
 
 ```php
 <?php
@@ -219,7 +227,8 @@ class AppExtension extends CompilerExtension implements ITargetResourcesProvider
 
 ## Extending User class
 
-Be carefull if you want to extend `Nette\Security\User` class, because `carrooi\security` already extending that class for it's own needs.
+Be carefull if you want to extend `Nette\Security\User` class, because `carrooi\security` already extends that class 
+for it's own needs.
 
 ## Changelog
 
