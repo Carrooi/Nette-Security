@@ -1,5 +1,8 @@
 # Carrooi/Security
 
+[![Build Status](https://travis-ci.org/Carrooi/Nette-Security.svg?branch=master)](https://travis-ci.org/Carrooi/Nette-Security)
+[![Donate](http://b.repl.ca/v1/donate-PayPal-brightgreen.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FQUQ9LVAKADK8)
+
 Extensible authorization built on top of [nette/security](https://github.com/nette/security).
 
 This package came in handy if you want to create modular website and keep all pieces decoupled with "custom" checking for privileges.
