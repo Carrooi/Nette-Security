@@ -97,6 +97,16 @@ class SecurityExtensionTest extends TestCase
 	}
 
 
+	public function testIsAllowed_others()
+	{
+		Assert::false($this->user->isAllowed('favorites', 'view'));
+
+		$this->user->getStorage()->setAuthenticated(true);
+
+		Assert::true($this->user->isAllowed('favorites', 'view'));
+	}
+
+
 	public function testIsAllowed_customAuthorizator()
 	{
 

@@ -58,6 +58,20 @@ automatically return `true`. But the second `default` will overwrite this option
 
 That means that eg. `->isAllowed('book', 'detail')` will return `false`, but `->isAllowed('user', 'detail')` `true`.
 
+## Other resources and actions
+
+If `default` option is not enough, you can create default resource or default action with asterisk.
+
+```neon
+security:
+	
+	resources:
+		favorites:
+			actions:
+				*:
+					loggedIn: true
+```
+
 ## Custom resource authorizator
 
 Now lets create the same authorization for books by hand.

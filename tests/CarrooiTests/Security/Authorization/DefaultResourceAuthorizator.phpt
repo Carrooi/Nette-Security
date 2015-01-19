@@ -130,6 +130,23 @@ class DefaultResourceAuthorizatorTest extends TestCase
 	}
 
 
+	public function testIsAllowed_others_allowed()
+	{
+		$this->resourceAuthorizator->addAction('*', null, true);
+		$this->user->getStorage()->setAuthenticated(true);
+
+		Assert::true($this->resourceAuthorizator->isAllowed($this->user, 'view'));
+	}
+
+
+	public function testIsAllowed_others_notAllowed()
+	{
+		$this->resourceAuthorizator->addAction('*', null, true);
+
+		Assert::false($this->resourceAuthorizator->isAllowed($this->user, 'view'));
+	}
+
+
 	public function testIsAllowed()
 	{
 		$this->resourceAuthorizator->addAction('view', null, true, ['normal', 'admin']);

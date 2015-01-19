@@ -51,3 +51,9 @@ security:
 
 				add:
 					roles: [admin]
+
+		favorites:
+			default: false
+			actions:
+				*:
+					loggedIn: true

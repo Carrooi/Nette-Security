@@ -67,11 +67,17 @@ class DefaultResourceAuthorizator extends Object implements IResourceAuthorizato
 	 */
 	public function isAllowed(User $user, $action, $data = null)
 	{
-		if (!isset($this->actions[$action])) {
-			return $this->default;
-		}
+		$a = null;
 
-		$a = $this->actions[$action];
+		if (isset($this->actions[$action])) {
+			$a = $this->actions[$action];
+		} else {
+			if (!isset($this->actions['*'])) {
+				return $this->default;
+			}
+
+			$a = $this->actions['*'];
+		}
 
 		if ($a['allowed'] !== null) {
 			return $a['allowed'] === true;

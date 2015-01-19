@@ -73,6 +73,10 @@ class ResourcesManager extends Object
 			return $this->authorizators[$name];
 		}
 
+		if (isset($this->authorizators['*'])) {
+			return $this->authorizators['*'];
+		}
+
 		return null;
 	}
 

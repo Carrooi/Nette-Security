@@ -77,6 +77,22 @@ class AuthorizatorTest extends TestCase
 	}
 
 
+	public function testIsAllowed_otherResource()
+	{
+		$resourceAuthorizator = new DefaultResourceAuthorizator;
+		$resourceAuthorizator
+			->addAction('*', null, true);
+
+		$this->manager->addAuthorizator('*', $resourceAuthorizator);
+
+		Assert::false($this->authorizator->isAllowed($this->user, 'user', 'view'));
+
+		$this->user->getStorage()->setAuthenticated(true);
+
+		Assert::true($this->authorizator->isAllowed($this->user, 'user', 'view'));
+	}
+
+
 	public function testIsAllowed_targetResource_unknown()
 	{
 		Assert::false($this->authorizator->isAllowed($this->user, new Book, 'view'));
