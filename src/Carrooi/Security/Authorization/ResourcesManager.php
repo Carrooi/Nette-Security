@@ -3,6 +3,7 @@
 namespace Carrooi\Security\Authorization;
 
 use Nette\Object;
+use Nette\Reflection\ClassType;
 
 /**
  *
@@ -41,10 +42,22 @@ class ResourcesManager extends Object
 			return $resource;
 		}
 
-		$resource = get_class($resource);
+		$className = get_class($resource);
 
-		if (isset($this->targetResources[$resource])) {
-			return $this->targetResources[$resource];
+		if (!isset($this->targetResources[$className])) {
+			$rc = ClassType::from($resource);
+
+			foreach ($this->targetResources as $class => $name) {
+				if ($rc->isSubclassOf($class)) {
+					$this->targetResources[$rc->getName()] = $name;
+					$className = $rc->getName();
+					break;
+				}
+			}
+		}
+
+		if (isset($this->targetResources[$className])) {
+			return $this->targetResources[$className];
 		}
 
 		return null;

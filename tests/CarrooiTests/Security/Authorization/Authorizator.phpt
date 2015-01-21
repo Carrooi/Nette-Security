@@ -116,7 +116,26 @@ class AuthorizatorTest extends TestCase
 		Assert::false($this->authorizator->isAllowed($this->user, new Book(5), 'edit'));
 	}
 
+
+	public function testIsAllowed_targetResource_subclass()
+	{
+		$this->manager->addTargetResource('CarrooiTests\Security\Model\Book', 'book');
+		$this->manager->addAuthorizator('book', new Books);
+
+		$this->user->setId(5);
+		$this->user->setRoles(['writer']);
+		$this->user->getStorage()->setAuthenticated(true);
+
+		Assert::true($this->authorizator->isAllowed($this->user, new SuperBook(5), 'edit'));
+	}
+
 }
+
+
+/**
+ * @author David Kudera
+ */
+class SuperBook extends Book {}
 
 
 run(new AuthorizatorTest);

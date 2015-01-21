@@ -252,3 +252,6 @@ for it's own needs.
 	
 * 1.0.1
 	+ Added default resources and actions (asterisk)
+	
+* 1.0.2
+	+ Looking if given object for authorization is subclass of some registered target resource
