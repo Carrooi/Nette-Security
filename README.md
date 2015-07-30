@@ -24,16 +24,16 @@ Then just enable nette extension in your config.neon:
 
 ```neon
 extensions:
-	security: Carrooi\Security\DI\SecurityExtension
+	authorization: Carrooi\Security\DI\SecurityExtension
 ```
 
 ## Configuration
 
 ```neon
 extendsions:
-	security: Carrooi\Security\DI\SecurityExtension
+	authorization: Carrooi\Security\DI\SecurityExtension
 
-security:
+authorization:
 	default: true
 
 	resources:
@@ -63,7 +63,7 @@ That means that eg. `->isAllowed('book', 'detail')` will return `false`, but `->
 If `default` option is not enough, you can create default resource or default action with asterisk.
 
 ```neon
-security:
+authorization:
 	
 	resources:
 		favorites:
@@ -81,7 +81,7 @@ services:
 
 	- App\Model\Books
 
-security:
+authorization:
 	resources:
 		book: App\Model\Books
 ```
@@ -136,7 +136,7 @@ to update or delete their own books. First thing you need to do, is register som
 resource names (lets say mappers).
 
 ```neon
-security:
+authorization:
 	targetResources:
 		App\Model\Book: book
 ```
