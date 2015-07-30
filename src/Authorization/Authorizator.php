@@ -156,15 +156,12 @@ class Authorizator extends Object
 			$resource = $data[2];
 			$action = $data[3];
 
-			if ($type === 'signal' && $this->signalsMode === self::MODE_OFF) {
-				return true;
-			}
-
-			if ($type === 'component' && $this->componentsMode === self::MODE_OFF) {
-				return true;
-			}
-
-			if ($type === 'action' && $this->actionsMode === self::MODE_OFF) {
+			if (
+				($type === 'signal' && $this->signalsMode === self::MODE_OFF) ||
+				($type === 'component' && $this->componentsMode === self::MODE_OFF) ||
+				($type === 'action' && $this->actionsMode === self::MODE_OFF) ||
+				($type === 'action' && $this->actionsMode === self::MODE_ON && !$resource && !$action)
+			) {
 				return true;
 			}
 

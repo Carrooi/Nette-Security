@@ -203,7 +203,7 @@ class Books implements IResourceAuthorizator
 }
 ```
 
-## Link to presenter
+## Linking to presenter
 
 ```php
 class BasePresenter extends Nette\Application\UI\Presenter
