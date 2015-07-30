@@ -26,10 +26,10 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Carrooi\\Security\\": "src/Carrooi/Security"
+			"Carrooi\\Security\\": "src"
 		},
 		"classmap": [
-			"src/Carrooi/Security/exceptions.php"
+			"src/exceptions.php"
 		]
 	}
 }
