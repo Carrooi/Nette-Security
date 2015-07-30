@@ -2,6 +2,7 @@
 
 namespace Carrooi\Security\DI;
 
+use Carrooi\Security\Authorization\Authorizator;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Config\Helpers;
 
@@ -18,6 +19,9 @@ class SecurityExtension extends CompilerExtension
 		'default' => false,
 		'targetResources' => [],
 		'resources' => [],
+		'components' => true,
+		'signals' => true,
+		'actions' => true,
 	];
 
 	/** @var array */
@@ -50,7 +54,10 @@ class SecurityExtension extends CompilerExtension
 
 		$builder->addDefinition($this->prefix('authorizator'))
 			->setClass('Carrooi\Security\Authorization\Authorizator')
-			->addSetup('setDefault', [$config['default']]);
+			->addSetup('setDefault', [$config['default']])
+			->addSetup('setComponentsMode', [$this->parseMode($config['components'])])
+			->addSetup('setSignalsMode', [$this->parseMode($config['signals'])])
+			->addSetup('setActionsMode', [$this->parseMode($config['actions'])]);
 
 		$builder->getDefinition('user')
 			->setClass('Carrooi\Security\User\User');
@@ -95,6 +102,22 @@ class SecurityExtension extends CompilerExtension
 
 				$count++;
 			}
+		}
+	}
+
+
+	/**
+	 * @param string|bool $mode
+	 * @return int
+	 */
+	private function parseMode($mode)
+	{
+		if ($mode === 'strict') {
+			return Authorizator::MODE_STRICT;
+		} elseif ($mode) {
+			return Authorizator::MODE_ON;
+		} else {
+			return Authorizator::MODE_OFF;
 		}
 	}
 
