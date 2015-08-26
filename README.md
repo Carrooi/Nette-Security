@@ -203,6 +203,25 @@ class Books implements IResourceAuthorizator
 }
 ```
 
+Or you can write "magic" `is<action>Allowed` methods:
+
+```php
+class Books implements IResourceAuthorizator
+{
+
+	public function isAllowed(User $user, $action, $data = null)
+	{
+		return false;
+	}
+	
+	public function isEditAllowed(User $user, $data = null)
+	{
+		return true;
+	}
+
+}
+```
+
 ## Linking to presenter
 
 ```php
@@ -377,6 +396,9 @@ Be carefull if you want to extend `Nette\Security\User` class, because `carrooi\
 for it's own needs.
 
 ## Changelog
+
+* 1.1.0
+	+ Add 
 
 * 1.0.3
 	+ Add lazy register resource authorizators - prevents circular references in some cases
