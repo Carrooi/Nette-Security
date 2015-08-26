@@ -190,7 +190,12 @@ class Authorizator extends Object
 
 		$resource = $resource === $name ? null : $resource;
 
-		return $authorizator->isAllowed($user, $action, $resource);
+		if (method_exists($authorizator, 'is'. $action. 'Allowed')) {
+			return (bool) $authorizator->{'is'. $action. 'Allowed'}($user, $resource);
+
+		} else {
+			return (bool) $authorizator->isAllowed($user, $action, $resource);
+		}
 	}
 
 

@@ -11,8 +11,10 @@ namespace CarrooiTests\Security\Authorization;
 
 use Carrooi\Security\Authorization\Authorizator;
 use Carrooi\Security\Authorization\DefaultResourceAuthorizator;
+use Carrooi\Security\Authorization\IResourceAuthorizator;
 use Carrooi\Security\Authorization\ResourcesManager;
 use Carrooi\Security\Authorization\TPresenterAuthorization;
+use Carrooi\Security\User\User;
 use CarrooiTests\Security\Model\Book;
 use CarrooiTests\Security\Model\Books;
 use CarrooiTests\SecurityMocks\UserMock;
@@ -142,6 +144,22 @@ class AuthorizatorTest extends TestCase
 		$this->manager->registerAuthorizator('book', get_class($authorizator));
 
 		Assert::true($this->authorizator->isAllowed($this->user, new Book(5), 'view'));
+	}
+
+
+	public function testIsAllowed_magicMethod()
+	{
+		$authorizator = \Mockery::mock(__NAMESPACE__. '\MagicAuthorizator')->makePartial()
+			->shouldReceive('isEditAllowed')->once()->andReturn(true)->getMock()
+			->shouldReceive('isAllowed')->once()->andReturn(false)->getMock();
+
+		$this->container->shouldReceive('getByType')->once()->with(get_class($authorizator))->andReturn($authorizator);
+
+		$this->manager->addTargetResource('CarrooiTests\Security\Model\Book', 'book');
+		$this->manager->registerAuthorizator('book', get_class($authorizator));
+
+		Assert::true($this->authorizator->isAllowed($this->user, new Book(5), 'edit'));
+		Assert::false($this->authorizator->isAllowed($this->user, new Book(5), 'add'));
 	}
 
 
@@ -459,6 +477,32 @@ class SuperPresenter extends Presenter
 	{
 		return new Book(5);
 	}
+
+}
+
+
+/**
+ * @author David Kudera
+ */
+class MagicAuthorizator implements IResourceAuthorizator
+{
+
+
+	/**
+	 * @param \Carrooi\Security\User\User $user
+	 * @param string $action
+	 * @param mixed $data
+	 * @return bool
+	 */
+	public function isAllowed(User $user, $action, $data = null) {}
+
+
+	/**
+	 * @param \Carrooi\Security\User\User $user
+	 * @param null $data
+	 * @return bool
+	 */
+	public function isEditAllowed(User $user, $data = null) {}
 
 }
 
