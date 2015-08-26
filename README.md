@@ -378,11 +378,14 @@ for it's own needs.
 
 ## Changelog
 
-* 1.0.0
-	+ Initial commit
-	
-* 1.0.1
-	+ Added default resources and actions (asterisk)
+* 1.0.3
+	+ Add lazy register resource authorizators - prevents circular references in some cases
 	
 * 1.0.2
 	+ Looking if given object for authorization is subclass of some registered target resource
+	
+* 1.0.1
+	+ Added default resources and actions (asterisk)
+
+* 1.0.0
+	+ Initial commit
