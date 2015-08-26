@@ -33,6 +33,9 @@ class AuthorizatorTest extends TestCase
 {
 
 
+	/** @var \Nette\DI\Container|\Mockery\MockInterface */
+	private $container;
+
 	/** @var \Carrooi\Security\Authorization\ResourcesManager */
 	private $manager;
 
@@ -45,9 +48,16 @@ class AuthorizatorTest extends TestCase
 
 	public function setUp()
 	{
-		$this->manager = new ResourcesManager;
+		$this->container = \Mockery::mock('Nette\DI\Container');
+		$this->manager = new ResourcesManager($this->container);
 		$this->authorizator = new Authorizator($this->manager);
 		$this->user = new UserMock(new UserStorageMock, $this->authorizator);
+	}
+
+
+	public function tearDown()
+	{
+		\Mockery::close();
 	}
 
 
@@ -118,6 +128,20 @@ class AuthorizatorTest extends TestCase
 		$this->user->getStorage()->setAuthenticated(false);
 
 		Assert::false($this->authorizator->isAllowed($this->user, new Book(5), 'edit'));
+	}
+
+
+	public function testIsAllowed_registeredTargetResource()
+	{
+		$authorizator = \Mockery::mock('Carrooi\Security\IResourceAuthorizator')
+			->shouldReceive('isAllowed')->once()->andReturn(true)->getMock();
+
+		$this->container->shouldReceive('getByType')->once()->with(get_class($authorizator))->andReturn($authorizator);
+
+		$this->manager->addTargetResource('CarrooiTests\Security\Model\Book', 'book');
+		$this->manager->registerAuthorizator('book', get_class($authorizator));
+
+		Assert::true($this->authorizator->isAllowed($this->user, new Book(5), 'view'));
 	}
 
 

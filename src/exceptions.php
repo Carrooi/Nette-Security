@@ -11,3 +11,7 @@ class InvalidStateException extends RuntimeException {}
 class NotImplementedException extends LogicException {}
 
 class StrictModeException extends LogicException {}
+
+class AuthorizatorClassNotExistsException extends LogicException {}
+
+class AuthorizatorInvalidTypeException extends LogicException {}

@@ -36,8 +36,16 @@ class DefaultResourceAuthorizatorTest extends TestCase
 
 	public function setUp()
 	{
-		$this->user = new UserMock(new UserStorageMock, new Authorizator(new ResourcesManager));
+		$container = \Mockery::mock('Nette\DI\Container');
+
+		$this->user = new UserMock(new UserStorageMock, new Authorizator(new ResourcesManager($container)));
 		$this->resourceAuthorizator = new DefaultResourceAuthorizator;
+	}
+
+
+	public function tearDown()
+	{
+		\Mockery::close();
 	}
 
 

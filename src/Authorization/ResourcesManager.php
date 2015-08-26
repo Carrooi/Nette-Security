@@ -2,6 +2,9 @@
 
 namespace Carrooi\Security\Authorization;
 
+use Carrooi\Security\AuthorizatorClassNotExistsException;
+use Carrooi\Security\AuthorizatorInvalidTypeException;
+use Nette\DI\Container;
 use Nette\Object;
 use Nette\Reflection\ClassType;
 
@@ -13,11 +16,23 @@ class ResourcesManager extends Object
 {
 
 
+	/** @var \Nette\DI\Container */
+	private $container;
+
 	/** @var array */
 	private $targetResources = [];
 
-	/** @var \Carrooi\Security\Authorization\IResourceAuthorizator[] */
+	/** @var \Carrooi\Security\Authorization\IResourceAuthorizator[]|string[] */
 	private $authorizators = [];
+
+
+	/**
+	 * @param \Nette\DI\Container $container
+	 */
+	public function __construct(Container $container)
+	{
+		$this->container = $container;
+	}
 
 
 	/**
@@ -78,19 +93,48 @@ class ResourcesManager extends Object
 
 	/**
 	 * @param string $name
+	 * @param string $class
+	 * @return $this
+	 */
+	public function registerAuthorizator($name, $class)
+	{
+		if (!class_exists($class)) {
+			throw new AuthorizatorClassNotExistsException('Authorizator class '. $class. ' is not valid class.');
+		}
+
+		$this->authorizators[$name] = $class;
+
+		return $this;
+	}
+
+
+	/**
+	 * @param string $name
 	 * @return \Carrooi\Security\Authorization\IResourceAuthorizator|null
 	 */
 	public function getAuthorizator($name)
 	{
 		if (isset($this->authorizators[$name])) {
-			return $this->authorizators[$name];
+			$authorizator = $this->authorizators[$name];
 		}
 
 		if (isset($this->authorizators['*'])) {
-			return $this->authorizators['*'];
+			$authorizator = $this->authorizators['*'];
 		}
 
-		return null;
+		if (!isset($authorizator)) {
+			return null;
+		}
+
+		if (is_object($authorizator)) {
+			return $authorizator;
+		}
+
+		if (is_string($authorizator)) {
+			return $this->authorizators[$name] = $this->container->getByType($authorizator);
+		}
+
+		throw new AuthorizatorInvalidTypeException('Authorizator can be only object or string.');
 	}
 
 }

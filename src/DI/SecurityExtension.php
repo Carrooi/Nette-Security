@@ -72,7 +72,7 @@ class SecurityExtension extends CompilerExtension
 			$resourceDefaults['default'] = $config['default'];
 
 			if (is_string($data)) {
-				$manager->addSetup('$service->addAuthorizator(?, $this->getByType(?))', [$resource, $data]);
+				$manager->addSetup('$service->registerAuthorizator(?, ?)', [$resource, $data]);
 
 			} elseif (is_array($data)) {
 				$data = Helpers::merge($data, $resourceDefaults);
