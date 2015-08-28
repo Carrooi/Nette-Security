@@ -374,6 +374,9 @@ for it's own needs.
 
 ## Changelog
 
+* 1.2.1
+	+ Throw an exception when using not registered resource object [#8](https://github.com/Carrooi/Nette-Security/issues/8)
+
 * 1.2.0
 	+ Add support for interfaces at target authorizators [#5](https://github.com/Carrooi/Nette-Security/issues/5)
 	+ Refactored tests [#2](https://github.com/Carrooi/Nette-Security/issues/2)
