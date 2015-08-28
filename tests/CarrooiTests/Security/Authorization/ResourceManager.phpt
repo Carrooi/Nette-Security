@@ -49,6 +49,14 @@ class ResourceManagerTest extends TestCase
 	}
 
 
+	public function testGetTargetResource_invalid()
+	{
+		Assert::exception(function() {
+			$this->manager->getTargetResource([]);
+		}, 'Carrooi\Security\InvalidArgumentException', 'Security resource target can be only string or an object, array given.');
+	}
+
+
 	public function testGetTargetResource_exactClass()
 	{
 		$this->manager->addTargetResource('stdClass', 'book');

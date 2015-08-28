@@ -4,6 +4,7 @@ namespace Carrooi\Security\Authorization;
 
 use Carrooi\Security\AuthorizatorClassNotExistsException;
 use Carrooi\Security\AuthorizatorInvalidTypeException;
+use Carrooi\Security\InvalidArgumentException;
 use Nette\DI\Container;
 use Nette\Object;
 use Nette\Reflection\ClassType;
@@ -55,6 +56,10 @@ class ResourcesManager extends Object
 	{
 		if (is_string($resource)) {
 			return $resource;
+		}
+
+		if (!is_object($resource)) {
+			throw new InvalidArgumentException('Security resource target can be only string or an object, '. gettype($resource). ' given.');
 		}
 
 		$className = get_class($resource);

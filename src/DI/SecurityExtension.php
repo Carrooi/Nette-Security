@@ -54,6 +54,7 @@ class SecurityExtension extends CompilerExtension
 
 		$builder->addDefinition($this->prefix('authorizator'))
 			->setClass('Carrooi\Security\Authorization\Authorizator')
+			->addSetup('setDebugMode', [$builder->parameters['debugMode']])
 			->addSetup('setDefault', [$config['default']])
 			->addSetup('setComponentsMode', [$this->parseMode($config['components'])])
 			->addSetup('setSignalsMode', [$this->parseMode($config['signals'])])

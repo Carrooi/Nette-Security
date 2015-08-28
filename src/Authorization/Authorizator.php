@@ -4,6 +4,7 @@ namespace Carrooi\Security\Authorization;
 
 use Carrooi\Security\InvalidStateException;
 use Carrooi\Security\StrictModeException;
+use Carrooi\Security\UnknownResourceObjectException;
 use Carrooi\Security\User\User;
 use Nette\Application\UI\Presenter;
 use Nette\Object;
@@ -31,6 +32,9 @@ class Authorizator extends Object
 	/** @var bool */
 	private $default = false;
 
+	/** @var bool */
+	private $debugMode = false;
+
 	/** @var int */
 	private $actionsMode = self::MODE_ON;
 
@@ -47,6 +51,17 @@ class Authorizator extends Object
 	public function __construct(ResourcesManager $resourcesManager)
 	{
 		$this->resourcesManages = $resourcesManager;
+	}
+
+
+	/**
+	 * @param bool $debugMode
+	 * @return $this
+	 */
+	public function setDebugMode($debugMode = true)
+	{
+		$this->debugMode = (bool) $debugMode;
+		return $this;
 	}
 
 
@@ -181,6 +196,10 @@ class Authorizator extends Object
 
 		$name = $this->resourcesManages->getTargetResource($resource);
 		if (!$name) {
+			if ($this->debugMode) {
+				throw new UnknownResourceObjectException('Object '. get_class($resource). ' is not registered security resource target.');
+			}
+
 			return $this->default;
 		}
 

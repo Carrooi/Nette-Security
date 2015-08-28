@@ -76,6 +76,18 @@ class AuthorizatorTest extends TestCase
 	}
 
 
+	public function testIsAllowed_targetResource_unknown_debugMode()
+	{
+		$this->manager->shouldReceive('getTargetResource')->once()->andReturnNull()->getMock();
+
+		$this->authorizator->setDebugMode(true);
+
+		Assert::exception(function() {
+			$this->authorizator->isAllowed($this->user, new \stdClass, 'view');
+		}, 'Carrooi\Security\UnknownResourceObjectException', 'Object stdClass is not registered security resource target.');
+	}
+
+
 	public function testIsAllowed_targetResource()
 	{
 		$booksAuthorizator = \Mockery::mock('Carrooi\Security\Authorizator\IResourceAuthorizator')
