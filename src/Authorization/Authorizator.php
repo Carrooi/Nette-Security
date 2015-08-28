@@ -7,6 +7,7 @@ use Carrooi\Security\StrictModeException;
 use Carrooi\Security\User\User;
 use Nette\Application\UI\Presenter;
 use Nette\Object;
+use Nette\Reflection\ClassType;
 use Nette\Reflection\Method;
 
 /**
@@ -190,7 +191,10 @@ class Authorizator extends Object
 
 		$resource = $resource === $name ? null : $resource;
 
-		if (method_exists($authorizator, 'is'. $action. 'Allowed')) {
+		$rc = ClassType::from($authorizator);
+		$method = 'is'. ucfirst($action). 'Allowed';
+
+		if ($rc->hasMethod($method) && $rc->getMethod($method)->isPublic()) {
 			return (bool) $authorizator->{'is'. $action. 'Allowed'}($user, $resource);
 
 		} else {
