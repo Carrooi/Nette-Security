@@ -11,7 +11,6 @@ namespace CarrooiTests\Security\Authorization;
 
 use Carrooi\Security\Authorization\Authorizator;
 use Carrooi\Security\Authorization\TPresenterAuthorization;
-use CarrooiTests\Security\Model\Book;
 use Nette\Application\ForbiddenRequestException;
 use Nette\Application\UI\Presenter;
 use Nette\Reflection\Method;
@@ -200,23 +199,6 @@ class Authorizator_PresenterTest extends TestCase
 	}
 
 
-	public function testIsAllowed_action_objectResource()
-	{
-		$booksAuthorizator = \Mockery::mock('Carrooi\Security\Authorization\IResourceAuthorizator')
-			->shouldReceive('isAllowed')->once()->andReturn(true)->getMock();
-
-		$this->manager
-			->shouldReceive('getTargetResource')->once()->andReturn('book')->getMock()
-			->shouldReceive('getAuthorizator')->once()->with('book')->andReturn($booksAuthorizator)->getMock();
-
-		$presenter = new SuperPresenter;
-
-		$this->authorizator->setActionsMode(Authorizator::MODE_ON);
-
-		Assert::true($this->authorizator->isAllowed($this->user, [$presenter, $presenter->getReflection()->getMethod('actionEditObjectResource')], null));
-	}
-
-
 	public function testIsAllowed_trait_methodRequirements()
 	{
 		$this->user->shouldReceive('isAllowed')->twice()->andReturnValues([true, false]);
@@ -352,17 +334,6 @@ class SuperPresenter extends Presenter
 	 * @action view
 	 */
 	public function actionView() {}
-
-	/**
-	 * @resource ::getBook()
-	 * @action edit
-	 */
-	public function actionEditObjectResource() {}
-
-	public function getBook()
-	{
-		return new Book(5);
-	}
 
 }
 

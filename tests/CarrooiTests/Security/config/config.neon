@@ -30,9 +30,6 @@ authorization:
 
 	default: true
 
-	targetResources:
-		CarrooiTests\Security\Model\Book: book
-
 	resources:
 		book: CarrooiTests\Security\Authorization\Books
 

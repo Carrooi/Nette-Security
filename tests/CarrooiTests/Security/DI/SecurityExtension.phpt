@@ -92,7 +92,7 @@ class Books implements IResourceAuthorizator
 	/**
 	 * @param \Carrooi\Security\User\User $user
 	 * @param string $action
-	 * @param \CarrooiTests\Security\Model\Book $data
+	 * @param mixed $data
 	 * @return bool
 	 */
 	public function isAllowed(User $user, $action, $data = null)

@@ -242,12 +242,6 @@ class Authorizator extends Object
 			throw new StrictModeException(get_class($presenter). '::'. $name. '(): Missing action annotation when security for signals is at strict mode.');
 		}
 
-		// object resource
-
-		if ($type === 'action' && $resource && preg_match('/^::([a-zA-Z]+)\(\)$/', $resource, $match)) {
-			$resource = $presenter->{$match[1]}();
-		}
-
 		// signals and components actions
 
 		if ($type === 'signal' || $type === 'component') {
