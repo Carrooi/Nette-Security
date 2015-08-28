@@ -9,7 +9,8 @@
 
 namespace CarrooiTests\Security\Authorization;
 
-use CarrooiTests\Security\Model\Book;
+use Carrooi\Security\Authorization\IResourceAuthorizator;
+use Carrooi\Security\User\User;
 use Nette\Configurator;
 use Tester\Assert;
 use Tester\TestCase;
@@ -25,10 +26,13 @@ class SecurityExtensionTest extends TestCase
 
 
 	/** @var \Nette\DI\Container */
-	private $context;
+	private $container;
 
-	/** @var \CarrooiTests\SecurityMocks\UserMock */
+	/** @var \Carrooi\Security\User\User */
 	private $user;
+
+	/** @var \Carrooi\Security\Authorization\Authorizator */
+	private $authorizator;
 
 
 	public function setUp()
@@ -38,15 +42,16 @@ class SecurityExtensionTest extends TestCase
 		$config->addParameters(['appDir' => __DIR__. '/../']);
 		$config->addConfig(__DIR__. '/../config/config.neon');
 
-		$this->context = $config->createContainer();
+		$this->container = $config->createContainer();
 
-		$this->user = $this->context->getByType('CarrooiTests\SecurityMocks\UserMock');
+		$this->user = $this->container->getByType('Carrooi\Security\User\User');
+		$this->authorizator = $this->container->getByType('Carrooi\Security\Authorization\Authorizator');
 	}
 
 
 	public function testDefaultResourceAuthorizator()
 	{
-		$authorizator = $this->user->getAuthorizator()->getResourcesManager()->getAuthorizator('user');
+		$authorizator = $this->authorizator->getResourcesManager()->getAuthorizator('user');
 
 		Assert::type('Carrooi\Security\Authorization\DefaultResourceAuthorizator', $authorizator);
 	}
@@ -54,77 +59,45 @@ class SecurityExtensionTest extends TestCase
 
 	public function testCustomResourceAuthorizator()
 	{
-		$authorizator = $this->user->getAuthorizator()->getResourcesManager()->getAuthorizator('book');
+		$authorizator = $this->authorizator->getResourcesManager()->getAuthorizator('book');
 
-		Assert::type('CarrooiTests\Security\Model\Books', $authorizator);
+		Assert::type('CarrooiTests\Security\Authorization\Books', $authorizator);
 	}
 
 
 	public function testGetDefault()
 	{
-		Assert::true($this->user->getAuthorizator()->getDefault());
+		Assert::true($this->authorizator->getDefault());
 	}
 
 
 	public function testGetDefault_defaultAuthorizator()
 	{
-		$authorizator = $this->user->getAuthorizator()->getResourcesManager()->getAuthorizator('user');
+		$authorizator = $this->authorizator->getResourcesManager()->getAuthorizator('user');
 		/** @var \Carrooi\Security\Authorization\DefaultResourceAuthorizator $authorizator */
 
 		Assert::false($authorizator->getDefault());
 	}
 
-
-	public function testIsAllowed_defaultAuthorizator()
-	{
-		Assert::false($this->user->isAllowed('user', 'detail'));
-		Assert::false($this->user->isAllowed('user', 'add'));
-		Assert::false($this->user->isAllowed('user', 'delete'));
-
-		Assert::true($this->user->isAllowed('user', 'view'));
-
-		$this->user->getStorage()->setAuthenticated(true);
-
-		Assert::true($this->user->isAllowed('user', 'detail'));
-
-		Assert::false($this->user->isAllowed('user', 'add'));
-
-		$this->user->setRoles(['normal', 'admin']);
-
-		Assert::true($this->user->isAllowed('user', 'add'));
-
-		Assert::false($this->user->isAllowed('user', 'edit'));
-	}
+}
 
 
-	public function testIsAllowed_others()
-	{
-		Assert::false($this->user->isAllowed('favorites', 'view'));
-
-		$this->user->getStorage()->setAuthenticated(true);
-
-		Assert::true($this->user->isAllowed('favorites', 'view'));
-	}
+/**
+ * @author David Kudera
+ */
+class Books implements IResourceAuthorizator
+{
 
 
-	public function testIsAllowed_customAuthorizator()
+	/**
+	 * @param \Carrooi\Security\User\User $user
+	 * @param string $action
+	 * @param \CarrooiTests\Security\Model\Book $data
+	 * @return bool
+	 */
+	public function isAllowed(User $user, $action, $data = null)
 	{
 
-		Assert::true($this->user->isAllowed('book', 'view'));
-
-		Assert::false($this->user->isAllowed('book', 'delete'));
-		Assert::false($this->user->isAllowed('book', 'edit'));
-
-		$this->user->getStorage()->setAuthenticated(true);
-		$this->user->setRoles(['normal', 'admin', 'writer']);
-
-		$book = new Book(5);
-
-		Assert::false($this->user->isAllowed($book, 'edit'));
-
-		$this->user->setId(5);
-
-		Assert::true($this->user->isAllowed($book, 'edit'));
 	}
 
 }

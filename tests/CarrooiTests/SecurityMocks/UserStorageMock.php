@@ -3,7 +3,6 @@
 namespace CarrooiTests\SecurityMocks;
 
 use Nette;
-use Nette\Object;
 use Nette\Security\IIdentity;
 use Nette\Security\IUserStorage;
 
@@ -11,68 +10,19 @@ use Nette\Security\IUserStorage;
  *
  * @author David Kudera
  */
-class UserStorageMock extends Object implements IUserStorage
+class UserStorageMock implements IUserStorage
 {
 
+	function setAuthenticated($state) {}
 
-	/** @var bool */
-	private $authenticated = false;
+	function isAuthenticated() {}
 
+	function setIdentity(IIdentity $identity = NULL) {}
 
-	/**
-	 * @param bool $state
-	 * @return $this
-	 */
-	function setAuthenticated($state)
-	{
-		$this->authenticated = $state;
-		return $this;
-	}
+	function getIdentity() {}
 
+	function setExpiration($time, $flags = 0) {}
 
-	/**
-	 * @return bool
-	 */
-	function isAuthenticated()
-	{
-		return $this->authenticated === true;
-	}
-
-
-	/**
-	 * @param \Nette\Security\IIdentity $identity
-	 */
-	function setIdentity(IIdentity $identity = NULL)
-	{
-
-	}
-
-
-	/**
-	 * @return \Nette\Security\IIdentity
-	 */
-	function getIdentity()
-	{
-
-	}
-
-
-	/**
-	 * @param string|int|\DateTime $time
-	 * @param int $flags
-	 */
-	function setExpiration($time, $flags = 0)
-	{
-
-	}
-
-
-	/**
-	 * @return int
-	 */
-	function getLogoutReason()
-	{
-
-	}
+	function getLogoutReason() {}
 
 }

@@ -19,14 +19,11 @@ services:
 	cacheStorage:
 		class: Nette\Caching\Storages\MemoryStorage
 
-	user:
-		class: CarrooiTests\SecurityMocks\UserMock
-
 	nette.userStorage:
 		class: CarrooiTests\SecurityMocks\UserStorageMock
 
 	books:
-		class: CarrooiTests\Security\Model\Books
+		class: CarrooiTests\Security\Authorization\Books
 
 
 authorization:
@@ -37,7 +34,7 @@ authorization:
 		CarrooiTests\Security\Model\Book: book
 
 	resources:
-		book: CarrooiTests\Security\Model\Books
+		book: CarrooiTests\Security\Authorization\Books
 
 		user:
 			default: false
