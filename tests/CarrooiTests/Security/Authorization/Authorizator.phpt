@@ -147,6 +147,33 @@ class AuthorizatorTest extends TestCase
 	}
 
 
+	public function testIsAllowed_targetResource_subclass()
+	{
+		$this->manager->addTargetResource('CarrooiTests\Security\Model\Book', 'book');
+		$this->manager->addAuthorizator('book', new Books);
+
+		$this->user->setId(5);
+		$this->user->setRoles(['writer']);
+		$this->user->getStorage()->setAuthenticated(true);
+
+		Assert::true($this->authorizator->isAllowed($this->user, new SuperBook(5), 'edit'));
+	}
+
+
+	public function testIsAllowed_targetResource_interface()
+	{
+		$books = \Mockery::mock('Carrooi\Security\Authorization\IResourceAuthorizator')
+			->shouldReceive('isAllowed')->once()->andReturn(true)->getMock();
+
+		$book = \Mockery::mock('CarrooiTests\Security\Authorization\IAuthorizableBook');
+
+		$this->manager->addTargetResource('CarrooiTests\Security\Authorization\IAuthorizableBook', 'book');
+		$this->manager->addAuthorizator('book', $books);
+
+		Assert::true($this->authorizator->isAllowed($this->user, $book, 'edit'));
+	}
+
+
 	public function testIsAllowed_magicMethod()
 	{
 		$authorizator = \Mockery::mock(__NAMESPACE__. '\MagicAuthorizator')->makePartial()
@@ -160,19 +187,6 @@ class AuthorizatorTest extends TestCase
 
 		Assert::true($this->authorizator->isAllowed($this->user, new Book(5), 'edit'));
 		Assert::false($this->authorizator->isAllowed($this->user, new Book(5), 'add'));
-	}
-
-
-	public function testIsAllowed_targetResource_subclass()
-	{
-		$this->manager->addTargetResource('CarrooiTests\Security\Model\Book', 'book');
-		$this->manager->addAuthorizator('book', new Books);
-
-		$this->user->setId(5);
-		$this->user->setRoles(['writer']);
-		$this->user->getStorage()->setAuthenticated(true);
-
-		Assert::true($this->authorizator->isAllowed($this->user, new SuperBook(5), 'edit'));
 	}
 
 
@@ -503,6 +517,15 @@ class MagicAuthorizator implements IResourceAuthorizator
 	 * @return bool
 	 */
 	public function isEditAllowed(User $user, $data = null) {}
+
+}
+
+
+/**
+ * @author David Kudera
+ */
+interface IAuthorizableBook
+{
 
 }
 

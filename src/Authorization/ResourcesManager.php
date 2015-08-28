@@ -63,7 +63,10 @@ class ResourcesManager extends Object
 			$rc = ClassType::from($resource);
 
 			foreach ($this->targetResources as $class => $name) {
-				if ($rc->isSubclassOf($class)) {
+				if (
+					(class_exists($class) && $rc->isSubclassOf($class)) ||
+					(interface_exists($class) && $rc->implementsInterface($class))
+				) {
 					$this->targetResources[$rc->getName()] = $name;
 					$className = $rc->getName();
 					break;
