@@ -260,29 +260,6 @@ class BookPresenter extends BasePresenter
 }
 ```
 
-or with object as resource:
-
-```php
-class BookPresenter extends BasePresenter
-{
-
-	/**
-	 * @resource ::getBook()
-	 * @action edit
-	 */
-	public function actionEdit($id)
-	{
-
-	}
-	
-	public function getBook()
-	{
-		return $this->books->findOneById($this->getParameter('id'));
-	}
-
-}
-```
-
 ## Securing presenter components and signals
 
 You can restrict any component or signal to some action. With that no one can access for example edit form from add action.
@@ -397,8 +374,14 @@ for it's own needs.
 
 ## Changelog
 
+* 1.2.0
+	+ Add support for interfaces at target authorizators [#5](https://github.com/Carrooi/Nette-Security/issues/5)
+	+ Refactored tests [#2](https://github.com/Carrooi/Nette-Security/issues/2)
+	+ Remove support for magic presenter resource getters [#7](https://github.com/Carrooi/Nette-Security/issues/7)
+	+ Fix magic resource authenticator with private `is<action>Allowed` [#4](https://github.com/Carrooi/Nette-Security/issues/4)
+
 * 1.1.0
-	+ Add 
+	+ Add support for magic resource authenticator methods `is<action>Allowed`
 
 * 1.0.3
 	+ Add lazy register resource authorizators - prevents circular references in some cases
