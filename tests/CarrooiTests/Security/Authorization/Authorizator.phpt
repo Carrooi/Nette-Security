@@ -52,7 +52,7 @@ class AuthorizatorTest extends TestCase
 
 	public function testIsAllowed_unknownResource()
 	{
-		$this->manager->shouldReceive('getTargetResource')->once()->with('user')->andReturnNull()->getMock();
+		$this->manager->shouldReceive('findTargetResources')->once()->with('user')->andReturnNull()->getMock();
 
 		Assert::false($this->authorizator->isAllowed($this->user, 'user', 'view'));
 	}
@@ -60,7 +60,7 @@ class AuthorizatorTest extends TestCase
 
 	public function testIsAllowed_unknownResource_setDefault()
 	{
-		$this->manager->shouldReceive('getTargetResource')->once()->with('user')->andReturnNull()->getMock();
+		$this->manager->shouldReceive('findTargetResources')->once()->with('user')->andReturnNull()->getMock();
 
 		$this->authorizator->setDefault(true);
 
@@ -70,7 +70,7 @@ class AuthorizatorTest extends TestCase
 
 	public function testIsAllowed_targetResource_unknown()
 	{
-		$this->manager->shouldReceive('getTargetResource')->once()->andReturnNull()->getMock();
+		$this->manager->shouldReceive('findTargetResources')->once()->andReturnNull()->getMock();
 
 		Assert::false($this->authorizator->isAllowed($this->user, new \stdClass, 'view'));
 	}
@@ -78,7 +78,7 @@ class AuthorizatorTest extends TestCase
 
 	public function testIsAllowed_targetResource_unknown_debugMode()
 	{
-		$this->manager->shouldReceive('getTargetResource')->once()->andReturnNull()->getMock();
+		$this->manager->shouldReceive('findTargetResources')->once()->andReturnNull()->getMock();
 
 		$this->authorizator->setDebugMode(true);
 
@@ -91,26 +91,49 @@ class AuthorizatorTest extends TestCase
 	public function testIsAllowed_targetResource()
 	{
 		$booksAuthorizator = \Mockery::mock('Carrooi\Security\Authorizator\IResourceAuthorizator')
+			->shouldReceive('getActions')->once()->andReturn('*')->getMock()
 			->shouldReceive('isAllowed')->once()->andReturn(true)->getMock();
 
 		$book = new \stdClass;
 
 		$this->manager
-			->shouldReceive('getTargetResource')->once()->with($book)->andReturn('book')->getMock()
+			->shouldReceive('findTargetResources')->once()->with($book)->andReturn(['book'])->getMock()
 			->shouldReceive('getAuthorizator')->once()->with('book')->andReturn($booksAuthorizator)->getMock();
 
 		Assert::true($this->authorizator->isAllowed($this->user, $book, 'edit'));
 	}
 
 
+	public function testIsAllowed_targetResource_many()
+	{
+		$booksAuthorizator = \Mockery::mock('Carrooi\Security\Authorizator\IResourceAuthorizator')
+			->shouldReceive('getActions')->once()->andReturn('*')->getMock()
+			->shouldReceive('isAllowed')->once()->andReturn(true)->getMock();
+
+		$chaptersAuthorizator = \Mockery::mock('Carrooi\Security\Authorizator\IResourceAuthorizator')
+			->shouldReceive('getActions')->once()->andReturn('*')->getMock()
+			->shouldReceive('isAllowed')->once()->andReturn(false)->getMock();
+
+		$book = new \stdClass;
+
+		$this->manager
+			->shouldReceive('findTargetResources')->once()->with($book)->andReturn(['book', 'chapter'])->getMock()
+			->shouldReceive('getAuthorizator')->once()->with('book')->andReturn($booksAuthorizator)->getMock()
+			->shouldReceive('getAuthorizator')->once()->with('chapter')->andReturn($chaptersAuthorizator)->getMock();
+
+		Assert::false($this->authorizator->isAllowed($this->user, $book, 'edit'));
+	}
+
+
 	public function testIsAllowed_magicMethod()
 	{
 		$magicAuthorizator = \Mockery::mock('CarrooiTests\Security\Authorization\MagicAuthorizator')
+			->shouldReceive('getActions')->twice()->andReturn('*')->getMock()
 			->shouldReceive('isEditAllowed')->once()->andReturn(true)->getMock()
 			->shouldReceive('isAllowed')->once()->andReturn(false)->getMock();
 
 		$this->manager
-			->shouldReceive('getTargetResource')->twice()->with('book')->andReturn('book')->getMock()
+			->shouldReceive('findTargetResources')->twice()->with('book')->andReturn(['book'])->getMock()
 			->shouldReceive('getAuthorizator')->twice()->with('book')->andReturn($magicAuthorizator)->getMock();
 
 		Assert::true($this->authorizator->isAllowed($this->user, 'book', 'edit'));
@@ -125,6 +148,15 @@ class AuthorizatorTest extends TestCase
  */
 class MagicAuthorizator implements IResourceAuthorizator
 {
+
+
+	/**
+	 * @return string
+	 */
+	public function getActions()
+	{
+		return '*';
+	}
 
 
 	/**

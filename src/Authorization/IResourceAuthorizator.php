@@ -13,6 +13,12 @@ interface IResourceAuthorizator
 
 
 	/**
+	 * @return array|string
+	 */
+	public function getActions();
+
+
+	/**
 	 * @param \Carrooi\Security\User\User $user
 	 * @param string $action
 	 * @param mixed $data

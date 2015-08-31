@@ -102,6 +102,17 @@ class Books implements IResourceAuthorizator
 
 
 	/**
+	 * @return array
+	 */
+	public function getActions()
+	{
+		return [
+			'view', 'add', 'edit', 'delete',
+		];
+	}
+
+
+	/**
 	 * @param \Carrooi\Security\User\User $user
 	 * @param string $action
 	 * @param mixed $data
@@ -126,6 +137,8 @@ class Books implements IResourceAuthorizator
 
 }
 ```
+
+You can also return `*` from `getActions()` method to tell that the authorizator can accept any action. 
 
 ## Use objects as resources
 

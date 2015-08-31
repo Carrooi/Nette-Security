@@ -183,11 +183,12 @@ class Authorizator_PresenterTest extends TestCase
 	public function testIsAllowed_action()
 	{
 		$booksAuthorizator = \Mockery::mock('Carrooi\Security\Authorization\IResourceAuthorizator')
+			->shouldReceive('getActions')->twice()->andReturn('*')->getMock()
 			->shouldReceive('isAllowed')->once()->with($this->user, 'edit', null)->andReturn(false)->getMock()
 			->shouldReceive('isAllowed')->once()->with($this->user, 'view', null)->andReturn(true)->getMock();
 
 		$this->manager
-			->shouldReceive('getTargetResource')->twice()->with('book')->andReturn('book')->getMock()
+			->shouldReceive('findTargetResources')->twice()->with('book')->andReturn(['book'])->getMock()
 			->shouldReceive('getAuthorizator')->twice()->with('book')->andReturn($booksAuthorizator)->getMock();
 
 		$presenter = new SuperPresenter;

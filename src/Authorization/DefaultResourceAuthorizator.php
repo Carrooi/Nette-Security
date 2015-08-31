@@ -60,6 +60,15 @@ class DefaultResourceAuthorizator extends Object implements IResourceAuthorizato
 
 
 	/**
+	 * @return string
+	 */
+	public function getActions()
+	{
+		return '*';
+	}
+
+
+	/**
 	 * @param \Carrooi\Security\User\User $user
 	 * @param string $action
 	 * @param mixed $data

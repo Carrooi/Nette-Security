@@ -43,45 +43,57 @@ class ResourceManagerTest extends TestCase
 	}
 
 
-	public function testGetTargetResource_string()
+	public function testFindTargetResources_string()
 	{
-		Assert::same('book', $this->manager->getTargetResource('book'));
+		Assert::equal(['book'], $this->manager->findTargetResources('book'));
 	}
 
 
-	public function testGetTargetResource_invalid()
+	public function testFindTargetResources_invalid()
 	{
 		Assert::exception(function() {
-			$this->manager->getTargetResource([]);
+			$this->manager->findTargetResources([]);
 		}, 'Carrooi\Security\InvalidArgumentException', 'Security resource target can be only string or an object, array given.');
 	}
 
 
-	public function testGetTargetResource_exactClass()
+	public function testFindTargetResources_exactClass()
 	{
 		$this->manager->addTargetResource('stdClass', 'book');
 
-		Assert::same('book', $this->manager->getTargetResource(new \stdClass));
+		Assert::equal(['book'], $this->manager->findTargetResources(new \stdClass));
 	}
 
 
-	public function testGetTargetResource_childrenClass()
+	public function testFindTargetResources_childrenClass()
 	{
 		$this->manager->addTargetResource('stdClass', 'book');
 
 		$book = \Mockery::mock('stdClass');
 
-		Assert::same('book', $this->manager->getTargetResource($book));
+		Assert::equal(['book'], $this->manager->findTargetResources($book));
 	}
 
 
-	public function testGetTargetResource_interface()
+	public function testFindTargetResources_interface()
 	{
 		$this->manager->addTargetResource('Countable', 'book');
 
 		$book = \Mockery::mock('Countable');
 
-		Assert::same('book', $this->manager->getTargetResource($book));
+		Assert::equal(['book'], $this->manager->findTargetResources($book));
+	}
+
+
+	public function testFindTargetResources_many()
+	{
+		$this->manager->addTargetResource('Countable', 'book');
+		$this->manager->addTargetResource('ArrayAccess', 'chapter');
+		$this->manager->addTargetResource('Serializable', 'comment');
+
+		$book = \Mockery::mock('Countable,ArrayAccess');
+
+		Assert::equal(['book', 'chapter'], $this->manager->findTargetResources($book));
 	}
 
 

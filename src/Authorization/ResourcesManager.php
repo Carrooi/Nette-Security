@@ -43,19 +43,26 @@ class ResourcesManager extends Object
 	 */
 	public function addTargetResource($class, $name)
 	{
-		$this->targetResources[$class] = $name;
+		if (!isset($this->targetResources[$class])) {
+			$this->targetResources[$class] = [];
+		}
+
+		if (array_search($name, $this->targetResources[$class]) === false) {
+			$this->targetResources[$class][] = $name;
+		}
+
 		return $this;
 	}
 
 
 	/**
 	 * @param mixed $resource
-	 * @return string
+	 * @return array
 	 */
-	public function getTargetResource($resource)
+	public function findTargetResources($resource)
 	{
 		if (is_string($resource)) {
-			return $resource;
+			return [$resource];
 		}
 
 		if (!is_object($resource)) {
@@ -67,14 +74,16 @@ class ResourcesManager extends Object
 		if (!isset($this->targetResources[$className])) {
 			$rc = ClassType::from($resource);
 
-			foreach ($this->targetResources as $class => $name) {
+			foreach ($this->targetResources as $class => $names) {
 				if (
 					(class_exists($class) && $rc->isSubclassOf($class)) ||
 					(interface_exists($class) && $rc->implementsInterface($class))
 				) {
-					$this->targetResources[$rc->getName()] = $name;
 					$className = $rc->getName();
-					break;
+
+					foreach ($names as $name) {
+						$this->addTargetResource($className, $name);
+					}
 				}
 			}
 		}

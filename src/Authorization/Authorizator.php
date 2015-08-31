@@ -194,8 +194,8 @@ class Authorizator extends Object
 			}
 		}
 
-		$name = $this->resourcesManages->getTargetResource($resource);
-		if (!$name) {
+		$names = $this->resourcesManages->findTargetResources($resource);
+		if (!$names) {
 			if ($this->debugMode) {
 				throw new UnknownResourceObjectException('Object '. get_class($resource). ' is not registered security resource target.');
 			}
@@ -203,12 +203,36 @@ class Authorizator extends Object
 			return $this->default;
 		}
 
-		$authorizator = $this->resourcesManages->getAuthorizator($name);
+		foreach ($names as $name) {
+			if (!$this->isAllowedForAuthorizator($user, $name, $resource, $action)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * @param \Carrooi\Security\User\User $user
+	 * @param string $authorizatorName
+	 * @param mixed $resource
+	 * @param string $action
+	 * @return bool
+	 */
+	private function isAllowedForAuthorizator(User $user, $authorizatorName, $resource, $action)
+	{
+		$authorizator = $this->resourcesManages->getAuthorizator($authorizatorName);
 		if (!$authorizator) {
 			return $this->default;
 		}
 
-		$resource = $resource === $name ? null : $resource;
+		$actions = $authorizator->getActions();
+		if ($actions !== '*' && !in_array($action, $actions)) {
+			return true;
+		}
+
+		$resource = $resource === $authorizatorName ? null : $resource;
 
 		$rc = ClassType::from($authorizator);
 		$method = 'is'. ucfirst($action). 'Allowed';
