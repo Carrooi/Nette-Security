@@ -6,16 +6,15 @@ use Carrooi\Security\InvalidStateException;
 use Carrooi\Security\StrictModeException;
 use Carrooi\Security\UnknownResourceObjectException;
 use Carrooi\Security\User\User;
+use Nette\Application\UI\MethodReflection;
 use Nette\Application\UI\Presenter;
-use Nette\Object;
 use Nette\Reflection\ClassType;
-use Nette\Reflection\Method;
 
 /**
  *
  * @author David Kudera
  */
-class Authorizator extends Object
+class Authorizator
 {
 
 
@@ -162,7 +161,7 @@ class Authorizator extends Object
 	 */
 	public function isAllowed(User $user, $resource, $action)
 	{
-		if (is_array($resource) && $resource[0] instanceof Presenter && $resource[1] instanceof Method) {
+		if (is_array($resource) && $resource[0] instanceof Presenter && $resource[1] instanceof MethodReflection) {
 			$data = $this->parseMethod($resource[0], $resource[1]);
 
 			/** @var \Nette\Application\UI\Presenter $presenter */
@@ -248,10 +247,10 @@ class Authorizator extends Object
 
 	/**
 	 * @param \Nette\Application\UI\Presenter $presenter
-	 * @param \Nette\Reflection\Method $method
+	 * @param \Nette\Application\UI\MethodReflection $method
 	 * @return array
 	 */
-	private function parseMethod(Presenter $presenter, Method $method)
+	private function parseMethod(Presenter $presenter, MethodReflection $method)
 	{
 		$name = $method->getName();
 

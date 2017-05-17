@@ -2,7 +2,6 @@
 
 namespace CarrooiTests\SecurityMocks;
 
-use Nette;
 use Nette\Security\IIdentity;
 use Nette\Security\IUserStorage;
 

@@ -3,13 +3,12 @@
 namespace Carrooi\Security\Authorization;
 
 use Carrooi\Security\User\User;
-use Nette\Object;
 
 /**
  *
  * @author David Kudera
  */
-class DefaultResourceAuthorizator extends Object implements IResourceAuthorizator
+class DefaultResourceAuthorizator implements IResourceAuthorizator
 {
 
 

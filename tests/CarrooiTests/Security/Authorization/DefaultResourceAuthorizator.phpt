@@ -10,6 +10,7 @@
 namespace CarrooiTests\Security\Authorization;
 
 use Carrooi\Security\Authorization\DefaultResourceAuthorizator;
+use Carrooi\Security\User\User;
 use Tester\Assert;
 use Tester\TestCase;
 
@@ -32,7 +33,7 @@ class DefaultResourceAuthorizatorTest extends TestCase
 
 	public function setUp()
 	{
-		$this->user = \Mockery::mock('Carrooi\Security\User\User');
+		$this->user = \Mockery::mock(User::class);
 
 		$this->resourceAuthorizator = new DefaultResourceAuthorizator;
 	}
@@ -179,4 +180,4 @@ class DefaultResourceAuthorizatorTest extends TestCase
 }
 
 
-run(new DefaultResourceAuthorizatorTest);
+(new DefaultResourceAuthorizatorTest)->run();

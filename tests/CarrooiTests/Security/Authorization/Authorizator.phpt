@@ -11,6 +11,8 @@ namespace CarrooiTests\Security\Authorization;
 
 use Carrooi\Security\Authorization\Authorizator;
 use Carrooi\Security\Authorization\IResourceAuthorizator;
+use Carrooi\Security\Authorization\ResourcesManager;
+use Carrooi\Security\UnknownResourceObjectException;
 use Carrooi\Security\User\User;
 use Tester\Assert;
 use Tester\TestCase;
@@ -37,8 +39,8 @@ class AuthorizatorTest extends TestCase
 
 	public function setUp()
 	{
-		$this->manager = \Mockery::mock('Carrooi\Security\Authorization\ResourcesManager');
-		$this->user = \Mockery::mock('Carrooi\Security\User\User');
+		$this->manager = \Mockery::mock(ResourcesManager::class);
+		$this->user = \Mockery::mock(User::class);
 
 		$this->authorizator = new Authorizator($this->manager);
 	}
@@ -84,13 +86,13 @@ class AuthorizatorTest extends TestCase
 
 		Assert::exception(function() {
 			$this->authorizator->isAllowed($this->user, new \stdClass, 'view');
-		}, 'Carrooi\Security\UnknownResourceObjectException', 'Object stdClass is not registered security resource target.');
+		}, UnknownResourceObjectException::class, 'Object stdClass is not registered security resource target.');
 	}
 
 
 	public function testIsAllowed_targetResource()
 	{
-		$booksAuthorizator = \Mockery::mock('Carrooi\Security\Authorizator\IResourceAuthorizator')
+		$booksAuthorizator = \Mockery::mock(IResourceAuthorizator::class)
 			->shouldReceive('getActions')->once()->andReturn('*')->getMock()
 			->shouldReceive('isAllowed')->once()->andReturn(true)->getMock();
 
@@ -106,11 +108,11 @@ class AuthorizatorTest extends TestCase
 
 	public function testIsAllowed_targetResource_many()
 	{
-		$booksAuthorizator = \Mockery::mock('Carrooi\Security\Authorizator\IResourceAuthorizator')
+		$booksAuthorizator = \Mockery::mock(IResourceAuthorizator::class)
 			->shouldReceive('getActions')->once()->andReturn('*')->getMock()
 			->shouldReceive('isAllowed')->once()->andReturn(true)->getMock();
 
-		$chaptersAuthorizator = \Mockery::mock('Carrooi\Security\Authorizator\IResourceAuthorizator')
+		$chaptersAuthorizator = \Mockery::mock(IResourceAuthorizator::class)
 			->shouldReceive('getActions')->once()->andReturn('*')->getMock()
 			->shouldReceive('isAllowed')->once()->andReturn(false)->getMock();
 
@@ -127,7 +129,7 @@ class AuthorizatorTest extends TestCase
 
 	public function testIsAllowed_magicMethod()
 	{
-		$magicAuthorizator = \Mockery::mock('CarrooiTests\Security\Authorization\MagicAuthorizator')
+		$magicAuthorizator = \Mockery::mock(MagicAuthorizator::class)
 			->shouldReceive('getActions')->twice()->andReturn('*')->getMock()
 			->shouldReceive('isEditAllowed')->once()->andReturn(true)->getMock()
 			->shouldReceive('isAllowed')->once()->andReturn(false)->getMock();
@@ -178,4 +180,4 @@ class MagicAuthorizator implements IResourceAuthorizator
 }
 
 
-run(new AuthorizatorTest);
+(new AuthorizatorTest)->run();

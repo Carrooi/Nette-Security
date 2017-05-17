@@ -9,6 +9,8 @@
 
 namespace CarrooiTests\Security\Authorization;
 
+use Carrooi\Security\Authorization\Authorizator;
+use Carrooi\Security\Authorization\DefaultResourceAuthorizator;
 use Carrooi\Security\Authorization\IResourceAuthorizator;
 use Carrooi\Security\User\User;
 use Nette\Configurator;
@@ -44,8 +46,8 @@ class SecurityExtensionTest extends TestCase
 
 		$this->container = $config->createContainer();
 
-		$this->user = $this->container->getByType('Carrooi\Security\User\User');
-		$this->authorizator = $this->container->getByType('Carrooi\Security\Authorization\Authorizator');
+		$this->user = $this->container->getByType(User::class);
+		$this->authorizator = $this->container->getByType(Authorizator::class);
 	}
 
 
@@ -53,7 +55,7 @@ class SecurityExtensionTest extends TestCase
 	{
 		$authorizator = $this->authorizator->getResourcesManager()->getAuthorizator('user');
 
-		Assert::type('Carrooi\Security\Authorization\DefaultResourceAuthorizator', $authorizator);
+		Assert::type(DefaultResourceAuthorizator::class, $authorizator);
 	}
 
 
@@ -61,7 +63,7 @@ class SecurityExtensionTest extends TestCase
 	{
 		$authorizator = $this->authorizator->getResourcesManager()->getAuthorizator('book');
 
-		Assert::type('CarrooiTests\Security\Authorization\Books', $authorizator);
+		Assert::type(Books::class, $authorizator);
 	}
 
 
@@ -73,8 +75,8 @@ class SecurityExtensionTest extends TestCase
 
 	public function testGetDefault_defaultAuthorizator()
 	{
-		$authorizator = $this->authorizator->getResourcesManager()->getAuthorizator('user');
 		/** @var \Carrooi\Security\Authorization\DefaultResourceAuthorizator $authorizator */
+		$authorizator = $this->authorizator->getResourcesManager()->getAuthorizator('user');
 
 		Assert::false($authorizator->getDefault());
 	}
@@ -112,4 +114,4 @@ class Books implements IResourceAuthorizator
 }
 
 
-run(new SecurityExtensionTest);
+(new SecurityExtensionTest)->run();

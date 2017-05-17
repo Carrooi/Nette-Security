@@ -3,6 +3,9 @@
 namespace Carrooi\Security\DI;
 
 use Carrooi\Security\Authorization\Authorizator;
+use Carrooi\Security\Authorization\DefaultResourceAuthorizator;
+use Carrooi\Security\Authorization\ResourcesManager;
+use Carrooi\Security\User\User;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Config\Helpers;
 
@@ -43,25 +46,24 @@ class SecurityExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig($this->defaults);
 
-		foreach ($this->compiler->getExtensions('Carrooi\Security\DI\ITargetResourcesProvider') as $resourcesResolver) {
-			/** @var \Carrooi\Security\DI\ITargetResourcesProvider $resourcesResolver */
-
+		/** @var \Carrooi\Security\DI\ITargetResourcesProvider $resourcesResolver */
+		foreach ($this->compiler->getExtensions(ITargetResourcesProvider::class) as $resourcesResolver) {
 			$config['targetResources'] = Helpers::merge($config['targetResources'], $resourcesResolver->getTargetResources());
 		}
 
 		$manager = $builder->addDefinition($this->prefix('resourcesManager'))
-			->setClass('Carrooi\Security\Authorization\ResourcesManager');
+			->setClass(ResourcesManager::class);
 
 		$builder->addDefinition($this->prefix('authorizator'))
-			->setClass('Carrooi\Security\Authorization\Authorizator')
+			->setClass(Authorizator::class)
 			->addSetup('setDebugMode', [$builder->parameters['debugMode']])
 			->addSetup('setDefault', [$config['default']])
 			->addSetup('setComponentsMode', [$this->parseMode($config['components'])])
 			->addSetup('setSignalsMode', [$this->parseMode($config['signals'])])
 			->addSetup('setActionsMode', [$this->parseMode($config['actions'])]);
 
-		$builder->getDefinition('user')
-			->setClass('Carrooi\Security\User\User');
+		$builder->getDefinition('security.user')
+			->setClass(User::class);
 
 		foreach ($config['targetResources'] as $class => $resource) {
 			$manager->addSetup('addTargetResource', [$class, $resource]);
@@ -80,7 +82,7 @@ class SecurityExtension extends CompilerExtension
 
 				$authorizatorName = $this->prefix('authorizator.'. $count);
 				$authorizator = $builder->addDefinition($authorizatorName)
-					->setClass('Carrooi\Security\Authorization\DefaultResourceAuthorizator')
+					->setClass(DefaultResourceAuthorizator::class)
 					->addSetup('setDefault', [$data['default']])
 					->setAutowired(false);
 

@@ -10,10 +10,14 @@
 namespace CarrooiTests\Security\Authorization;
 
 use Carrooi\Security\Authorization\Authorizator;
+use Carrooi\Security\Authorization\IResourceAuthorizator;
+use Carrooi\Security\Authorization\ResourcesManager;
 use Carrooi\Security\Authorization\TPresenterAuthorization;
+use Carrooi\Security\StrictModeException;
+use Carrooi\Security\User\User;
 use Nette\Application\ForbiddenRequestException;
+use Nette\Application\UI\MethodReflection;
 use Nette\Application\UI\Presenter;
-use Nette\Reflection\Method;
 use Tester\Assert;
 use Tester\TestCase;
 
@@ -39,8 +43,8 @@ class Authorizator_PresenterTest extends TestCase
 
 	public function setUp()
 	{
-		$this->user = \Mockery::mock('Carrooi\Security\User\User');
-		$this->manager = \Mockery::mock('Carrooi\Security\Authorization\ResourcesManager');
+		$this->user = \Mockery::mock(User::class);
+		$this->manager = \Mockery::mock(ResourcesManager::class);
 
 		$this->authorizator = new Authorizator($this->manager);
 	}
@@ -60,7 +64,7 @@ class Authorizator_PresenterTest extends TestCase
 
 		Assert::exception(function() use ($presenter) {
 			$this->authorizator->isAllowed($this->user, [$presenter, $presenter->getReflection()->getMethod('handleNoAction')], null);
-		}, 'Carrooi\Security\StrictModeException', 'CarrooiTests\Security\Authorization\SuperPresenter::handleNoAction(): Missing action annotation when security for signals is at strict mode.');
+		}, StrictModeException::class, SuperPresenter::class. '::handleNoAction(): Missing action annotation when security for signals is at strict mode.');
 	}
 
 
@@ -72,7 +76,7 @@ class Authorizator_PresenterTest extends TestCase
 
 		Assert::exception(function() use ($presenter) {
 			$this->authorizator->isAllowed($this->user, [$presenter, $presenter->getReflection()->getMethod('createComponentNoAction')], null);
-		}, 'Carrooi\Security\StrictModeException', 'CarrooiTests\Security\Authorization\SuperPresenter::createComponentNoAction(): Missing action annotation when security for components is at strict mode.');
+		}, StrictModeException::class, SuperPresenter::class. '::createComponentNoAction(): Missing action annotation when security for components is at strict mode.');
 	}
 
 
@@ -84,11 +88,11 @@ class Authorizator_PresenterTest extends TestCase
 
 		Assert::exception(function() use ($presenter) {
 			$this->authorizator->isAllowed($this->user, [$presenter, $presenter->getReflection()->getMethod('actionNoResource')], null);
-		}, 'Carrooi\Security\StrictModeException', 'CarrooiTests\Security\Authorization\SuperPresenter::actionNoResource(): Missing resource or action annotation when security for actions is at strict mode.');
+		}, StrictModeException::class, SuperPresenter::class. '::actionNoResource(): Missing resource or action annotation when security for actions is at strict mode.');
 
 		Assert::exception(function() use ($presenter) {
 			$this->authorizator->isAllowed($this->user, [$presenter, $presenter->getReflection()->getMethod('actionNoAction')], null);
-		}, 'Carrooi\Security\StrictModeException', 'CarrooiTests\Security\Authorization\SuperPresenter::actionNoAction(): Missing resource or action annotation when security for actions is at strict mode.');
+		}, StrictModeException::class, SuperPresenter::class. '::actionNoAction(): Missing resource or action annotation when security for actions is at strict mode.');
 	}
 
 
@@ -182,7 +186,7 @@ class Authorizator_PresenterTest extends TestCase
 
 	public function testIsAllowed_action()
 	{
-		$booksAuthorizator = \Mockery::mock('Carrooi\Security\Authorization\IResourceAuthorizator')
+		$booksAuthorizator = \Mockery::mock(IResourceAuthorizator::class)
 			->shouldReceive('getActions')->twice()->andReturn('*')->getMock()
 			->shouldReceive('isAllowed')->once()->with($this->user, 'edit', null)->andReturn(false)->getMock()
 			->shouldReceive('isAllowed')->once()->with($this->user, 'view', null)->andReturn(true)->getMock();
@@ -212,7 +216,7 @@ class Authorizator_PresenterTest extends TestCase
 
 		Assert::exception(function() use ($presenter) {
 			$presenter->checkRequirements($presenter->getReflection()->getMethod('actionEdit'));
-		}, 'Nette\Application\ForbiddenRequestException');
+		}, ForbiddenRequestException::class);
 	}
 
 
@@ -229,7 +233,7 @@ class Authorizator_PresenterTest extends TestCase
 
 		Assert::exception(function() use ($presenter) {
 			$presenter->checkRequirements($presenter->getReflection()->getMethod('handleArrayActions'));
-		}, 'Nette\Application\ForbiddenRequestException');
+		}, ForbiddenRequestException::class);
 	}
 
 
@@ -246,7 +250,7 @@ class Authorizator_PresenterTest extends TestCase
 
 		Assert::exception(function() use ($presenter) {
 			$presenter->checkComponentRequirements('arrayActions');
-		}, 'Nette\Application\ForbiddenRequestException');
+		}, ForbiddenRequestException::class);
 	}
 
 }
@@ -272,7 +276,7 @@ class SuperPresenter extends Presenter
 
 	public function checkRequirements($element)
 	{
-		if ($element instanceof Method) {
+		if ($element instanceof MethodReflection) {
 			if (!$this->checkMethodRequirements($element)) {
 				throw new ForbiddenRequestException;
 			}
@@ -293,50 +297,50 @@ class SuperPresenter extends Presenter
 	public function handleNoAction() {}
 
 	/**
-	 * @action *
+	 * @action(*)
 	 */
 	public function handleAllActions() {}
 
 	/**
-	 * @action detail, edit, default
+	 * @action(detail, edit, default)
 	 */
 	public function handleArrayActions() {}
 
 	public function createComponentNoAction() {}
 
 	/**
-	 * @action *
+	 * @action(*)
 	 */
 	public function createComponentAllActions() {}
 
 	/**
-	 * @action detail, edit, default
+	 * @action(detail, edit, default)
 	 */
 	public function createComponentArrayActions() {}
 
 	/**
-	 * @action default
+	 * @action(default)
 	 */
 	public function actionNoResource() {}
 
 	/**
-	 * @resource book
+	 * @resource(book)
 	 */
 	public function actionNoAction() {}
 
 	/**
-	 * @resource book
-	 * @action edit
+	 * @resource(book)
+	 * @action(edit)
 	 */
 	public function actionEdit() {}
 
 	/**
-	 * @resource book
-	 * @action view
+	 * @resource(book)
+	 * @action(view)
 	 */
 	public function actionView() {}
 
 }
 
 
-run(new Authorizator_PresenterTest);
+(new Authorizator_PresenterTest)->run();

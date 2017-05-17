@@ -262,8 +262,8 @@ class BookPresenter extends BasePresenter
 {
 
 	/**
-	 * @resource book
-	 * @action view
+	 * @resource(book)
+	 * @action(view)
 	 */
 	public function actionDefault()
 	{
@@ -302,7 +302,7 @@ class BookPresenter extends BasePresenter
 {
 
 	/**
-	 * @action edit
+	 * @action(edit)
 	 */
 	protected function createComponentEditForm()
 	{
@@ -310,7 +310,7 @@ class BookPresenter extends BasePresenter
 	}
 	
 	/**
-	 * @action default, detail
+	 * @action(default, detail)
 	 */
 	protected function createComponentFavoriteButton()
 	{
@@ -318,7 +318,7 @@ class BookPresenter extends BasePresenter
 	}
 	
 	/**
-	 * @action *
+	 * @action(*)
 	 */
 	protected function createComponentReadLaterButton()
 	{

@@ -6,12 +6,12 @@ extensions:
 	authorization: Carrooi\Security\DI\SecurityExtension
 
 
-nette:
-	application:
-		scanDirs: false
+application:
+	scanDirs: false
 
-	session:
-		autoStart: false
+
+session:
+	autoStart: false
 
 
 services:

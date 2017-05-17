@@ -2,7 +2,7 @@
 
 namespace Carrooi\Security\Authorization;
 
-use Nette\Reflection\Method;
+use Nette\Application\UI\MethodReflection;
 
 /**
  *
@@ -25,10 +25,10 @@ trait TPresenterAuthorization
 
 
 	/**
-	 * @param \Nette\Reflection\Method $element
+	 * @param \Nette\Application\UI\MethodReflection $element
 	 * @return bool
 	 */
-	public function checkMethodRequirements(Method $element)
+	public function checkMethodRequirements(MethodReflection $element)
 	{
 		return $this->getUser()->isAllowed([$this, $element]);
 	}
@@ -40,7 +40,7 @@ trait TPresenterAuthorization
 	public function checkComponentRequirements($name)
 	{
 		$method = 'createComponent'. ucfirst($name);
-		$rc = Method::from($this, $method);
+		$rc = new MethodReflection($this, $method);
 
 		$this->checkRequirements($rc);
 	}

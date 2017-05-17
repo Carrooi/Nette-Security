@@ -6,14 +6,13 @@ use Carrooi\Security\AuthorizatorClassNotExistsException;
 use Carrooi\Security\AuthorizatorInvalidTypeException;
 use Carrooi\Security\InvalidArgumentException;
 use Nette\DI\Container;
-use Nette\Object;
 use Nette\Reflection\ClassType;
 
 /**
  *
  * @author David Kudera
  */
-class ResourcesManager extends Object
+class ResourcesManager
 {
 
 

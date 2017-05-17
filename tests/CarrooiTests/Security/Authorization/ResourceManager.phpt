@@ -9,7 +9,10 @@
 
 namespace CarrooiTests\Security\Authorization;
 
+use Carrooi\Security\Authorization\IResourceAuthorizator;
 use Carrooi\Security\Authorization\ResourcesManager;
+use Carrooi\Security\InvalidArgumentException;
+use Nette\DI\Container;
 use Tester\Assert;
 use Tester\TestCase;
 
@@ -32,7 +35,7 @@ class ResourceManagerTest extends TestCase
 
 	public function setUp()
 	{
-		$this->container = \Mockery::mock('Nette\DI\Container');
+		$this->container = \Mockery::mock(Container::class);
 		$this->manager = new ResourcesManager($this->container);
 	}
 
@@ -53,7 +56,7 @@ class ResourceManagerTest extends TestCase
 	{
 		Assert::exception(function() {
 			$this->manager->findTargetResources([]);
-		}, 'Carrooi\Security\InvalidArgumentException', 'Security resource target can be only string or an object, array given.');
+		}, InvalidArgumentException::class, 'Security resource target can be only string or an object, array given.');
 	}
 
 
@@ -105,7 +108,7 @@ class ResourceManagerTest extends TestCase
 
 	public function testGetAuthorizator_exactClass()
 	{
-		$authorizator = \Mockery::mock('Carrooi\Security\Authorization\IResourceAuthorizator');
+		$authorizator = \Mockery::mock(IResourceAuthorizator::class);
 
 		$this->manager->addAuthorizator('book', $authorizator);
 
@@ -115,7 +118,7 @@ class ResourceManagerTest extends TestCase
 
 	public function testGetAuthorizator_others()
 	{
-		$authorizator = \Mockery::mock('Carrooi\Security\Authorization\IResourceAuthorizator');
+		$authorizator = \Mockery::mock(IResourceAuthorizator::class);
 
 		$this->manager->addAuthorizator('*', $authorizator);
 
@@ -125,7 +128,7 @@ class ResourceManagerTest extends TestCase
 
 	public function testGetAuthorizator_registered()
 	{
-		$authorizator = \Mockery::mock('Carrooi\Security\Authorization\IResourceAuthorizator');
+		$authorizator = \Mockery::mock(IResourceAuthorizator::class);
 
 		$this->container->shouldReceive('getByType')->once()->with(get_class($authorizator))->andReturn($authorizator)->getMock();
 
@@ -137,4 +140,4 @@ class ResourceManagerTest extends TestCase
 }
 
 
-run(new ResourceManagerTest);
+(new ResourceManagerTest)->run();
